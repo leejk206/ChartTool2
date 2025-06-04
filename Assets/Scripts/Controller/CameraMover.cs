@@ -4,8 +4,8 @@ using UnityEngine.UI;
 public class CameraMover : MonoBehaviour
 {
     public float BPM = 120f;
-    private float speed; // units per second
-    private float beatsPerSecond;
+    public float speed; // units per second
+    public float beatsPerSecond;
     private bool isPlaying;
 
     BGMController bgmController;
@@ -20,7 +20,7 @@ public class CameraMover : MonoBehaviour
     {
         lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
         beatsPerSecond = BPM / 60;
-        speed = lineSpawner.beatSpacing * beatsPerSecond;
+        speed = 16 * beatsPerSecond;
         isPlaying = false;
 
         playButtonText = GameObject.Find("PlayButtonText").GetComponent<Text>();

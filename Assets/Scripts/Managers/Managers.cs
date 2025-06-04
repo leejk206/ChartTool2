@@ -12,8 +12,10 @@ public class Managers : MonoBehaviour
 
 
     InputManager _input = new InputManager();
+    ChartManager _chart = new ChartManager();
 
     public static InputManager Input { get { return Instance._input; } }
+    public static ChartManager Chart { get { return Instance._chart; } }
 
     void Start()
     {
@@ -38,6 +40,7 @@ public class Managers : MonoBehaviour
         // s_instance ¼¼ÆÃ
         s_instance = go.GetComponent<Managers>();
 
+        s_instance._chart.Init();
 
         DontDestroyOnLoad(go);
     }

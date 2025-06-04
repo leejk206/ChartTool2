@@ -18,13 +18,12 @@ public class LineSpawner : MonoBehaviour
     public GameObject eighthLineRoot;
     public GameObject sixteenthLinePrefab;
     public GameObject sixteenthLineRoot;
-    [HideInInspector]
     public float beatSpacing; // 한 박자 간격
     [HideInInspector]
     private int totalBeats = 10;
 
-    List<GameObject> lines;
-    List<GameObject> verticalLines;
+    public List<GameObject> lines;
+    public List<GameObject> verticalLines;
     List<GameObject> halfLines;
     List<GameObject> quaterLines;
     List<GameObject> eighthLines;
@@ -34,6 +33,8 @@ public class LineSpawner : MonoBehaviour
     Text showQuaterButtonText;
     Text showEighthButtonText;
     Text showSixteenthButtonText;
+
+    public float lineGap;
 
 
     void Start()
@@ -80,16 +81,19 @@ public class LineSpawner : MonoBehaviour
             Vector3 viewportPos = new Vector3(normalizedX, 0.5f, cam.nearClipPlane);
             Vector3 worldPos = cam.ViewportToWorldPoint(viewportPos);
             worldPos.z = 0;
+            GameObject line;
 
             if (i % 3 == 0)
             {
-                Instantiate(verticalLinePrefab, worldPos, Quaternion.identity, verticalLineRoot.transform);
+                line = Instantiate(verticalLinePrefab, worldPos, Quaternion.identity, verticalLineRoot.transform);
             }
             else
             {
-                Instantiate(hiddenVerticalLinePrefab, worldPos, Quaternion.identity, verticalLineRoot.transform);
+                line = Instantiate(hiddenVerticalLinePrefab, worldPos, Quaternion.identity, verticalLineRoot.transform);
             }
+            verticalLines.Add(line);
         }
+        lineGap = verticalLines[1].transform.position.x - verticalLines[0].transform.position.x;
 
         #region Whole
         beatSpacing = 16f;
@@ -152,6 +156,8 @@ public class LineSpawner : MonoBehaviour
             }
         }
         #endregion
+
+        lines.Sort((a, b) => a.transform.position.y.CompareTo(b.transform.position.y));
     }
 
     #region ShowLine
