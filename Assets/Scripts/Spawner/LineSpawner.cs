@@ -24,6 +24,7 @@ public class LineSpawner : MonoBehaviour
     private int totalBeats = 10;
 
     List<GameObject> lines;
+    List<GameObject> verticalLines;
     List<GameObject> halfLines;
     List<GameObject> quaterLines;
     List<GameObject> eighthLines;
@@ -38,6 +39,7 @@ public class LineSpawner : MonoBehaviour
     void Start()
     {
         verticalLinePrefab = Resources.Load<GameObject>("Prefabs/Lines/VerticalLine");
+        hiddenVerticalLinePrefab = Resources.Load<GameObject>("Prefabs/Lines/HiddenVerticalLine");
         verticalLineRoot = GameObject.Find("VerticalLines");
 
         wholeLinePrefab = Resources.Load<GameObject>("Prefabs/Lines/WholeLine");
@@ -52,6 +54,7 @@ public class LineSpawner : MonoBehaviour
         sixteenthLineRoot = GameObject.Find("SixteenthLines");
 
         lines = new();
+        verticalLines = new();
         halfLines = new();
         quaterLines = new();
         eighthLines = new();
@@ -69,17 +72,23 @@ public class LineSpawner : MonoBehaviour
     {
         Camera cam = Camera.main;
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 22; i++)
         {
-            // 0 ~ 1 사이 등간격 계산 (좌측부터 우측까지)
-            float normalizedX = (float)i / (8 - 1);
+            float normalizedX = (float)i / (22 - 1);
 
             // Viewport 좌표 → 월드 좌표로 변환
             Vector3 viewportPos = new Vector3(normalizedX, 0.5f, cam.nearClipPlane);
             Vector3 worldPos = cam.ViewportToWorldPoint(viewportPos);
             worldPos.z = 0;
 
-            Instantiate(verticalLinePrefab, worldPos, Quaternion.identity, transform);
+            if (i % 3 == 0)
+            {
+                Instantiate(verticalLinePrefab, worldPos, Quaternion.identity, verticalLineRoot.transform);
+            }
+            else
+            {
+                Instantiate(hiddenVerticalLinePrefab, worldPos, Quaternion.identity, verticalLineRoot.transform);
+            }
         }
 
         #region Whole
