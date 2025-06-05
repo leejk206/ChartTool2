@@ -12,6 +12,8 @@ public class ChartManager
     public List<UpFlickNoteData> UpFlickNotes;                    // up 플릭 노트 데이터
     public List<DownFlickNoteData> DownFlickNotes;                    // down 플릭 노트 데이터
 
+    public bool isLoaded;
+
 
     public void Init()
     {
@@ -26,7 +28,7 @@ public class ChartManager
             Notes.Add(new Dictionary<int, GameObject>());
         }
 
-
+        isLoaded = false;
     }
 
     public void SaveChart()
@@ -46,6 +48,8 @@ public class ChartManager
 
     public void LoadChart()
     {
+        isLoaded = true;
+
         LineSpawner lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
 
         string path = "Assets//MyChart.json";

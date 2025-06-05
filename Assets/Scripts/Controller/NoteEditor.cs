@@ -53,6 +53,11 @@ public class NoteEditor : MonoBehaviour
 
     public void AddNormalNote()
     {
+        if (Managers.Chart.isLoaded == false)
+        {
+            Managers.Chart.LoadChart();
+        }
+
         Camera cam = Camera.main;
         Vector3 mouseScreenPos = Input.mousePosition;
 
@@ -141,6 +146,11 @@ public class NoteEditor : MonoBehaviour
 
     public void AddSlideNote()
     {
+        if (Managers.Chart.isLoaded == false)
+        {
+            Managers.Chart.LoadChart();
+        }
+
         Camera cam = Camera.main;
         Vector3 mouseScreenPos = Input.mousePosition;
 
@@ -221,6 +231,11 @@ public class NoteEditor : MonoBehaviour
 
     public void AddUpFlickNote()
     {
+        if (Managers.Chart.isLoaded == false)
+        {
+            Managers.Chart.LoadChart();
+        }
+        
         Camera cam = Camera.main;
         Vector3 mouseScreenPos = Input.mousePosition;
 
@@ -298,6 +313,11 @@ public class NoteEditor : MonoBehaviour
 
     public void AddDownFlickNote()
     {
+        if (Managers.Chart.isLoaded == false)
+        {
+            Managers.Chart.LoadChart();
+        }
+        
         Camera cam = Camera.main;
         Vector3 mouseScreenPos = Input.mousePosition;
 
