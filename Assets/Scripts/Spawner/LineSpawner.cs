@@ -67,6 +67,7 @@ public class LineSpawner : MonoBehaviour
         showQuaterButtonText = GameObject.Find("ShowQuaterButton").GetComponent<Text>();
         showEighthButtonText = GameObject.Find("ShowEighthButton").GetComponent<Text>();
         showSixteenthButtonText = GameObject.Find("ShowSixteenthButton").GetComponent<Text>();
+
     }
 
     public void SpawnLine()
@@ -279,5 +280,10 @@ public class LineSpawner : MonoBehaviour
         }
     }
     #endregion
+
+    public void LoadChart()
+    {
+        Managers.Chart.LoadChart();
+    }
 
 }
