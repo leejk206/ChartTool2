@@ -2,74 +2,200 @@
     "NormalNotes": [
         {
             "position": 0,
-            "line": 12
-        },
-        {
-            "position": 0,
-            "line": 13
-        },
-        {
-            "position": 0,
-            "line": 14
-        },
-        {
-            "position": 1,
-            "line": 13
-        },
-        {
-            "position": 1,
-            "line": 14
-        },
-        {
-            "position": 1,
-            "line": 12
+            "line": 10,
+            "length": 5.1999993324279789
         }
     ],
     "HoldNotes": [],
     "SlideNotes": [
         {
-            "position": 2,
-            "line": 12
+            "position": 3,
+            "line": 6,
+            "length": 1.0
+        },
+        {
+            "position": 4,
+            "line": 5,
+            "length": 1.0
+        },
+        {
+            "position": 5,
+            "line": 4,
+            "length": 1.0
+        },
+        {
+            "position": 6,
+            "line": 3,
+            "length": 1.0
+        },
+        {
+            "position": 7,
+            "line": 2,
+            "length": 1.0
+        },
+        {
+            "position": 8,
+            "line": 3,
+            "length": 1.0
+        },
+        {
+            "position": 9,
+            "line": 4,
+            "length": 1.0
+        },
+        {
+            "position": 10,
+            "line": 5,
+            "length": 1.0
+        },
+        {
+            "position": 11,
+            "line": 6,
+            "length": 1.0
+        },
+        {
+            "position": 12,
+            "line": 7,
+            "length": 1.0
+        },
+        {
+            "position": 13,
+            "line": 8,
+            "length": 1.0
         },
         {
             "position": 2,
-            "line": 13
+            "line": 7,
+            "length": 1.0
+        },
+        {
+            "position": 1,
+            "line": 8,
+            "length": 1.0
+        },
+        {
+            "position": 13,
+            "line": 12,
+            "length": 1.0
+        },
+        {
+            "position": 12,
+            "line": 13,
+            "length": 1.0
+        },
+        {
+            "position": 11,
+            "line": 14,
+            "length": 1.0
+        },
+        {
+            "position": 10,
+            "line": 15,
+            "length": 1.0
+        },
+        {
+            "position": 9,
+            "line": 16,
+            "length": 1.0
+        },
+        {
+            "position": 8,
+            "line": 17,
+            "length": 1.0
+        },
+        {
+            "position": 7,
+            "line": 18,
+            "length": 1.0
+        },
+        {
+            "position": 6,
+            "line": 17,
+            "length": 1.0
+        },
+        {
+            "position": 5,
+            "line": 16,
+            "length": 1.0
+        },
+        {
+            "position": 4,
+            "line": 15,
+            "length": 1.0
+        },
+        {
+            "position": 3,
+            "line": 14,
+            "length": 1.0
         },
         {
             "position": 2,
-            "line": 14
+            "line": 13,
+            "length": 1.0
+        },
+        {
+            "position": 1,
+            "line": 12,
+            "length": 1.0
+        },
+        {
+            "position": 14,
+            "line": 9,
+            "length": 1.0
+        },
+        {
+            "position": 14,
+            "line": 11,
+            "length": 1.0
+        },
+        {
+            "position": 15,
+            "line": 10,
+            "length": 1.0
         }
     ],
     "UpFlickNotes": [
         {
-            "position": 3,
-            "line": 14
+            "position": 22,
+            "line": 12,
+            "length": 1.0
         },
         {
-            "position": 3,
-            "line": 13
+            "position": 18,
+            "line": 12,
+            "length": 1.0
         },
         {
-            "position": 3,
-            "line": 12
+            "position": 26,
+            "line": 12,
+            "length": 1.0
+        },
+        {
+            "position": 30,
+            "line": 12,
+            "length": 1.0
         }
     ],
     "DownFlickNotes": [
         {
-            "position": 3,
-            "line": 9
+            "position": 20,
+            "line": 8,
+            "length": 1.0
         },
         {
-            "position": 2,
-            "line": 5
+            "position": 24,
+            "line": 8,
+            "length": 1.0
         },
         {
-            "position": 3,
-            "line": 6
+            "position": 28,
+            "line": 8,
+            "length": 1.0
         },
         {
-            "position": 3,
-            "line": 11
+            "position": 32,
+            "line": 8,
+            "length": 1.0
         }
     ]
 }

@@ -107,7 +107,7 @@ public class ChartManager
             noteGO.transform.position = notePos;
 
             Vector3 scale = noteGO.transform.localScale;
-            scale.x = lineSpawner.lineGap;
+            scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
 
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
@@ -125,7 +125,7 @@ public class ChartManager
             noteGO.transform.position = notePos;
 
             Vector3 scale = noteGO.transform.localScale;
-            scale.x = lineSpawner.lineGap;
+            scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
 
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
@@ -143,7 +143,7 @@ public class ChartManager
             noteGO.transform.position = notePos;
 
             Vector3 scale = noteGO.transform.localScale;
-            scale.x = lineSpawner.lineGap;
+            scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
 
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
@@ -161,7 +161,7 @@ public class ChartManager
             noteGO.transform.position = notePos;
 
             Vector3 scale = noteGO.transform.localScale;
-            scale.x = lineSpawner.lineGap;
+            scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
 
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);

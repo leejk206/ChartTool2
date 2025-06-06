@@ -47,3 +47,5 @@ sysinfo.txt
 .idea/jsLibraryMappings.xml
 
 *.DotSettings.user
+
+.vs/

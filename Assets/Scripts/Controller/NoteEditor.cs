@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NoteEditor : MonoBehaviour
@@ -7,6 +8,9 @@ public class NoteEditor : MonoBehaviour
     Action _keypadKeyAction;
 
     LineSpawner lineSpawner;
+
+    int leftVerticalIndex;
+    int closestHorizontalIndex;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -15,6 +19,8 @@ public class NoteEditor : MonoBehaviour
         Managers.Input.KeyAction -= AddHoldNote;
         Managers.Input.KeyAction -= AddSlideNote;
         Managers.Input.KeyAction -= AddUpFlickNote;
+        Managers.Input.KeyAction -= AddDownFlickNote;
+        Managers.Input.KeyAction -= AddDownFlickNote;
         Managers.Input.KeyAction -= AddDownFlickNote;
         Managers.Input.KeyAction -= _keypadKeyAction;
 
@@ -40,24 +46,22 @@ public class NoteEditor : MonoBehaviour
             {
                 AddDownFlickNote();
             }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                IncreaseNoteLength();
+            }
+            else if (Input.GetKeyDown(KeyCode.A))
+            {
+                DecreaseNoteLength();
+            }
         };
         Managers.Input.KeyAction += _keypadKeyAction;
         lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
     }
 
     // Update is called once per frame
-    void Update()
+    void GetMousePosition()
     {
-
-    }
-
-    public void AddNormalNote()
-    {
-        if (Managers.Chart.isLoaded == false)
-        {
-            Managers.Chart.LoadChart();
-        }
-
         Camera cam = Camera.main;
         Vector3 mouseScreenPos = Input.mousePosition;
 
@@ -70,8 +74,6 @@ public class NoteEditor : MonoBehaviour
         ));
         mouseWorldPos.z = 0f;
 
-        int leftVerticalIndex;
-
         for (leftVerticalIndex = 0; leftVerticalIndex < lineSpawner.verticalLines.Count - 1; leftVerticalIndex++)
         {
             if (lineSpawner.verticalLines[leftVerticalIndex].transform.position.x < mouseWorldPos.x &&
@@ -79,7 +81,7 @@ public class NoteEditor : MonoBehaviour
                 break;
         }
 
-        int closestHorizontalIndex;
+
 
         for (closestHorizontalIndex = 0; closestHorizontalIndex < lineSpawner.lines.Count - 1; closestHorizontalIndex++)
         {
@@ -97,10 +99,21 @@ public class NoteEditor : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void AddNormalNote()
+    {
+        if (Managers.Chart.isLoaded == false)
+        {
+            Managers.Chart.LoadChart();
+        }
+
+        GetMousePosition();
+
 
         int index = Managers.Chart.NormalNotes.FindIndex(note =>
-    note.position == closestHorizontalIndex &&
-    note.line == leftVerticalIndex);
+            note.position == closestHorizontalIndex &&
+            note.line == leftVerticalIndex);
 
         if (!Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
         {
@@ -119,7 +132,7 @@ public class NoteEditor : MonoBehaviour
 
             Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
 
-            Managers.Chart.NormalNotes.Add(new NormalNoteData(closestHorizontalIndex, leftVerticalIndex));
+            Managers.Chart.NormalNotes.Add(new NormalNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
         }
         else
         {
@@ -151,49 +164,11 @@ public class NoteEditor : MonoBehaviour
             Managers.Chart.LoadChart();
         }
 
-        Camera cam = Camera.main;
-        Vector3 mouseScreenPos = Input.mousePosition;
-
-        // 화면 좌표를 월드 좌표(z=0 평면)로 변환
-        float zDistance = Mathf.Abs(cam.transform.position.z);
-        Vector3 mouseWorldPos = cam.ScreenToWorldPoint(new Vector3(
-            mouseScreenPos.x,
-            mouseScreenPos.y,
-            zDistance
-        ));
-        mouseWorldPos.z = 0f;
-
-        int leftVerticalIndex;
-
-        for (leftVerticalIndex = 0; leftVerticalIndex < lineSpawner.verticalLines.Count - 1; leftVerticalIndex++)
-        {
-            if (lineSpawner.verticalLines[leftVerticalIndex].transform.position.x < mouseWorldPos.x &&
-                lineSpawner.verticalLines[leftVerticalIndex + 1].transform.position.x >= mouseWorldPos.x)
-                break;
-        }
-
-        int closestHorizontalIndex;
-
-        for (closestHorizontalIndex = 0; closestHorizontalIndex < lineSpawner.lines.Count - 1; closestHorizontalIndex++)
-        {
-            if (lineSpawner.lines[closestHorizontalIndex].transform.position.y >= mouseWorldPos.y) break;
-            if (lineSpawner.lines[closestHorizontalIndex].transform.position.y < mouseWorldPos.y &&
-                lineSpawner.lines[closestHorizontalIndex + 1].transform.position.y >= mouseWorldPos.y)
-            {
-                float deltaDown = mouseWorldPos.y - lineSpawner.lines[closestHorizontalIndex].transform.position.y;
-                float deltaUp = lineSpawner.lines[closestHorizontalIndex + 1].transform.position.y - mouseWorldPos.y;
-
-                if (deltaDown >= deltaUp)
-                {
-                    closestHorizontalIndex++;
-                }
-                break;
-            }
-        }
+        GetMousePosition();
 
         int index = Managers.Chart.SlideNotes.FindIndex(note =>
-    note.position == closestHorizontalIndex &&
-    note.line == leftVerticalIndex);
+            note.position == closestHorizontalIndex &&
+            note.line == leftVerticalIndex);
 
         if (!Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
         {
@@ -212,7 +187,7 @@ public class NoteEditor : MonoBehaviour
 
             Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
 
-            Managers.Chart.SlideNotes.Add(new SlideNoteData(closestHorizontalIndex, leftVerticalIndex));
+            Managers.Chart.SlideNotes.Add(new SlideNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
         }
         else
         {
@@ -235,50 +210,12 @@ public class NoteEditor : MonoBehaviour
         {
             Managers.Chart.LoadChart();
         }
-        
-        Camera cam = Camera.main;
-        Vector3 mouseScreenPos = Input.mousePosition;
 
-        // 화면 좌표를 월드 좌표(z=0 평면)로 변환
-        float zDistance = Mathf.Abs(cam.transform.position.z);
-        Vector3 mouseWorldPos = cam.ScreenToWorldPoint(new Vector3(
-            mouseScreenPos.x,
-            mouseScreenPos.y,
-            zDistance
-        ));
-        mouseWorldPos.z = 0f;
-
-        int leftVerticalIndex;
-
-        for (leftVerticalIndex = 0; leftVerticalIndex < lineSpawner.verticalLines.Count - 1; leftVerticalIndex++)
-        {
-            if (lineSpawner.verticalLines[leftVerticalIndex].transform.position.x < mouseWorldPos.x &&
-                lineSpawner.verticalLines[leftVerticalIndex + 1].transform.position.x >= mouseWorldPos.x)
-                break;
-        }
-
-        int closestHorizontalIndex;
-
-        for (closestHorizontalIndex = 0; closestHorizontalIndex < lineSpawner.lines.Count - 1; closestHorizontalIndex++)
-        {
-            if (lineSpawner.lines[closestHorizontalIndex].transform.position.y >= mouseWorldPos.y) break;
-            if (lineSpawner.lines[closestHorizontalIndex].transform.position.y < mouseWorldPos.y &&
-                lineSpawner.lines[closestHorizontalIndex + 1].transform.position.y >= mouseWorldPos.y)
-            {
-                float deltaDown = mouseWorldPos.y - lineSpawner.lines[closestHorizontalIndex].transform.position.y;
-                float deltaUp = lineSpawner.lines[closestHorizontalIndex + 1].transform.position.y - mouseWorldPos.y;
-
-                if (deltaDown >= deltaUp)
-                {
-                    closestHorizontalIndex++;
-                }
-                break;
-            }
-        }
+        GetMousePosition();
 
         int index = Managers.Chart.UpFlickNotes.FindIndex(note =>
-    note.position == closestHorizontalIndex &&
-    note.line == leftVerticalIndex);
+            note.position == closestHorizontalIndex &&
+            note.line == leftVerticalIndex);
 
         if (!Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
         {
@@ -297,7 +234,7 @@ public class NoteEditor : MonoBehaviour
 
             Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
 
-            Managers.Chart.UpFlickNotes.Add(new UpFlickNoteData(closestHorizontalIndex, leftVerticalIndex));
+            Managers.Chart.UpFlickNotes.Add(new UpFlickNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
         }
         else
         {
@@ -317,50 +254,12 @@ public class NoteEditor : MonoBehaviour
         {
             Managers.Chart.LoadChart();
         }
-        
-        Camera cam = Camera.main;
-        Vector3 mouseScreenPos = Input.mousePosition;
 
-        // 화면 좌표를 월드 좌표(z=0 평면)로 변환
-        float zDistance = Mathf.Abs(cam.transform.position.z);
-        Vector3 mouseWorldPos = cam.ScreenToWorldPoint(new Vector3(
-            mouseScreenPos.x,
-            mouseScreenPos.y,
-            zDistance
-        ));
-        mouseWorldPos.z = 0f;
-
-        int leftVerticalIndex;
-
-        for (leftVerticalIndex = 0; leftVerticalIndex < lineSpawner.verticalLines.Count - 1; leftVerticalIndex++)
-        {
-            if (lineSpawner.verticalLines[leftVerticalIndex].transform.position.x < mouseWorldPos.x &&
-                lineSpawner.verticalLines[leftVerticalIndex + 1].transform.position.x >= mouseWorldPos.x)
-                break;
-        }
-
-        int closestHorizontalIndex;
-
-        for (closestHorizontalIndex = 0; closestHorizontalIndex < lineSpawner.lines.Count - 1; closestHorizontalIndex++)
-        {
-            if (lineSpawner.lines[closestHorizontalIndex].transform.position.y >= mouseWorldPos.y) break;
-            if (lineSpawner.lines[closestHorizontalIndex].transform.position.y < mouseWorldPos.y &&
-                lineSpawner.lines[closestHorizontalIndex + 1].transform.position.y >= mouseWorldPos.y)
-            {
-                float deltaDown = mouseWorldPos.y - lineSpawner.lines[closestHorizontalIndex].transform.position.y;
-                float deltaUp = lineSpawner.lines[closestHorizontalIndex + 1].transform.position.y - mouseWorldPos.y;
-
-                if (deltaDown >= deltaUp)
-                {
-                    closestHorizontalIndex++;
-                }
-                break;
-            }
-        }
+        GetMousePosition();
 
         int index = Managers.Chart.DownFlickNotes.FindIndex(note =>
-    note.position == closestHorizontalIndex &&
-    note.line == leftVerticalIndex);
+            note.position == closestHorizontalIndex &&
+            note.line == leftVerticalIndex);
 
         if (!Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
         {
@@ -379,7 +278,7 @@ public class NoteEditor : MonoBehaviour
 
             Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
 
-            Managers.Chart.DownFlickNotes.Add(new DownFlickNoteData(closestHorizontalIndex, leftVerticalIndex));
+            Managers.Chart.DownFlickNotes.Add(new DownFlickNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
         }
         else
         {
@@ -392,5 +291,59 @@ public class NoteEditor : MonoBehaviour
         }
         Managers.Chart.SaveChart();
 
+    }
+
+    public void IncreaseNoteLength()
+    {
+        if (Managers.Chart.isLoaded == false)
+        {
+            Managers.Chart.LoadChart();
+        }
+
+        GetMousePosition();
+
+        if (Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
+        {
+            int index = Managers.Chart.NormalNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
+            NormalNoteData updated = Managers.Chart.NormalNotes[index];
+            if (updated.length <= 4.8f)
+                updated.length += 0.2f;
+            Managers.Chart.NormalNotes[index] = updated;
+
+            if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+            {
+                Vector3 scale = obj.transform.localScale;
+                scale.x = lineSpawner.lineGap * updated.length;
+                obj.transform.localScale = scale;
+            }
+        }
+        else return;
+    }
+
+    public void DecreaseNoteLength()
+    {
+        if (Managers.Chart.isLoaded == false)
+        {
+            Managers.Chart.LoadChart();
+        }
+
+        GetMousePosition();
+
+        if (Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
+        {
+            int index = Managers.Chart.NormalNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
+            NormalNoteData updated = Managers.Chart.NormalNotes[index];
+            if (updated.length >= 1.2f)
+                updated.length -= 0.2f;
+            Managers.Chart.NormalNotes[index] = updated;
+
+            if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+            {
+                Vector3 scale = obj.transform.localScale;
+                scale.x = lineSpawner.lineGap * updated.length;
+                obj.transform.localScale = scale;
+            }
+        }
+        else return;
     }
 }
