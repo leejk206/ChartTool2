@@ -113,6 +113,32 @@ public class ChartManager
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
         }
 
+        foreach (var note in data.HoldNotes)
+        {
+            Managers.Chart.HoldNotes.Add(note);
+
+            Vector3 notePos = new Vector3(
+                lineSpawner.verticalLines[note.line].transform.position.x + (lineSpawner.lineGap / 2),
+                lineSpawner.lines[note.position].transform.position.y, 0f);
+            GameObject notePrefab;
+
+            if (note.noteType == 0)
+                notePrefab = Resources.Load<GameObject>("Prefabs/Notes/HoldNoteStart");
+            else if(note.noteType == 1)
+                notePrefab = Resources.Load<GameObject>("Prefabs/Notes/HoldNoteMid");
+            else
+                notePrefab = Resources.Load<GameObject>("Prefabs/Notes/HoldNoteEnd");
+
+            GameObject noteGO = GameObject.Instantiate(notePrefab);
+            noteGO.transform.position = notePos;
+
+            Vector3 scale = noteGO.transform.localScale;
+            scale.x = lineSpawner.lineGap * note.length;
+            noteGO.transform.localScale = scale;
+
+            Managers.Chart.Notes[note.line].Add(note.position, noteGO);
+        }
+
         foreach (var note in data.SlideNotes)
         {
             Managers.Chart.SlideNotes.Add(note);

@@ -19,7 +19,7 @@ public class Managers : MonoBehaviour
 
     void Start()
     {
-        Init();   
+        Init();     
     }
 
     static void Init()

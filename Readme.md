@@ -23,10 +23,19 @@ For Design
 6. 노트 추가 버튼을 Q,W,E,R,T로 연동하였습니다. 각각 Normal, Hold, Slide, UpFlick, DownFlick 노트를 추가/삭제하는 버튼입니다.
 7. HoldNote는 구현 예정입니다.
 
-06/07 업데이트
+06/08 업데이트
 
 For Dev
 Json 파일 형식에 float length 멤버를 추가하였습니다. 이 멤버는 노트의 길이 배율을 나타냅니다. 지금 구현하고 계신 노트에 length배만큼 좌우 길이를 곱하면 될 것 같습니다.
+HoldNote를 구현하였습니다. 다만 count 멤버는 아직 구현하지 못하였습니다.
 
 For Design
-1. 노트의 좌, 우 길이를 변경할 수 있습니다. A키를 누르면 최대 1배까지 짧아지고, D키를 누르면 최대 3배까지 길어집니다.
+0. Assets - Scenes - SampleScene을 클릭하여 프로그램을 실행합니다.
+1. 노트의 좌, 우 길이를 변경할 수 있습니다. A키를 누르면 최대 1배까지 짧아지고, D키를 누르면 최대 5배까지 길어집니다.
+2. HoldNote를 구현하였습니다. 키보드 W 키를 이용하여 생성할 수 있고, 각각 시작, 중간, 끝 HoldNote가 있습니다. 
+한 줄에서 끝나는 HoldNote는 시작 지점에 HoldNoteStart를 생성하고, 끝 부분에 HoldNoteEnd를 생성하면 됩니다. 여러 줄에 걸친 HoldNote는 시작 지점에 HoldNoteStart를 생성하고, 해당 라인이 끝나는 지점에 HoldNoteMid를 생성합니다.
+이후 이어지는 라인의 시작점에 HoldNoteMid를 생성하고, HoldNote가 끝나는 지점에 HoldNoteEnd를 생성하면 됩니다.
+W키를 이용해 HoldNote를 생성할 수 있고, 해당 위치에 W키를 한 번 더 누르면 HoldNote의 종류가 바뀝니다.
+3. 곡이 끝나게 되면 BGM을 재생하는 로직이 꼬입니다. 이런 경우 프로그램 자체를 다시 실행해주시길 바랍니다. 빠른 시일 내에 수정하도록 하겠습니다.
+4. Hierarchy - Main Camera 클릭 후, Inspector - Camera Mover - BPM에서 BPM을 조정할 수 있습니다.
+5. LineSpawner 스크립트의 totalBeats를 수정하면 총 비트 갯수를 바꿀 수 있습니다. 현재는 총 600개의 비트가 설정되어 있습니다.

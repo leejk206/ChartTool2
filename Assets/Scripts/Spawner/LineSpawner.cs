@@ -20,7 +20,7 @@ public class LineSpawner : MonoBehaviour
     public GameObject sixteenthLineRoot;
     public float beatSpacing; // 한 박자 간격
     [HideInInspector]
-    private int totalBeats = 10;
+    private int totalBeats = 600;
 
     public List<GameObject> lines;
     public List<GameObject> verticalLines;
