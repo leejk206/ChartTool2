@@ -2,12 +2,13 @@ For Dev
 
 Json 파일 형식이 변경되었습니다.
 
-Normal, Slide, UpFlick, DownFlick의 경우 2개의 int형 변수가 멤버로 존재합니다.
+Normal, Slide, UpFlick, DownFlick의 경우 2개의 int형 변수와 1개의 float형 변수수가 멤버로 존재합니다.
 int position : 이전과 같이 라인의 위치를 표시합니다. 1박을 16개의 비트로 쪼개어 정수형으로 나타냈습니다. 즉 노래 시작과 동시에 등장하는 박자는 0, 1박은 16, 2박은 32 등으로 표시됩니다.
 int line : 몇 번째 라인에 위치하는지를 나타냅니다. 0~20번째 줄이 있으며 가장 왼쪽부터 0으로 표시됩니다.
+float length : 노트의 좌우 길이를 나타냅니다. 기존 비트에 length 만큼 길어지거나 짧아진다고 생각해주시면 되겠습니다.
 
-HoldNote의 경우 4개의 int형 변수가 멤버로 존재합니다. (개발 예정정)
-int position, int line의 경우 다른 노트와 동일합니다.
+HoldNote의 경우 4개의 int형 변수와 1개의 float형 변수가 멤버로 존재합니다. (개발 예정)
+int position, int line, float length의 경우 다른 노트와 동일합니다.
 int noteType : 0, 1, 2로 구분되며 0의 경우 시작, 1의 경우 중간, 2의 경우 끝입니다.
 int count : 해당 holdnote가 몇 번째 holdnote인지 표시합니다.
 
@@ -26,11 +27,11 @@ For Design
 06/08 업데이트
 
 For Dev
-Json 파일 형식에 float length 멤버를 추가하였습니다. 이 멤버는 노트의 길이 배율을 나타냅니다. 지금 구현하고 계신 노트에 length배만큼 좌우 길이를 곱하면 될 것 같습니다.
+Json 파일 형식에 float length 멤버를 추가하였습니다. 이 멤버는 노트의 길이 배율을 나타냅니다. 지금 구현하고 계신 노트에 length배만큼 좌우 길이를 곱하면 됩니다.
 HoldNote를 구현하였습니다. 다만 count 멤버는 아직 구현하지 못하였습니다.
 
 For Design
-0. Assets - Scenes - SampleScene을 클릭하여 프로그램을 실행합니다.
+0. Assets - Scenes - SampleScene을 클릭하여 씬을 로드합니다.
 1. 노트의 좌, 우 길이를 변경할 수 있습니다. A키를 누르면 최대 1배까지 짧아지고, D키를 누르면 최대 5배까지 길어집니다.
 2. HoldNote를 구현하였습니다. 키보드 W 키를 이용하여 생성할 수 있고, 각각 시작, 중간, 끝 HoldNote가 있습니다. 
 한 줄에서 끝나는 HoldNote는 시작 지점에 HoldNoteStart를 생성하고, 끝 부분에 HoldNoteEnd를 생성하면 됩니다. 여러 줄에 걸친 HoldNote는 시작 지점에 HoldNoteStart를 생성하고, 해당 라인이 끝나는 지점에 HoldNoteMid를 생성합니다.
