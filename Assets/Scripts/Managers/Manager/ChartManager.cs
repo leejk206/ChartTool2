@@ -9,8 +9,7 @@ public class ChartManager
     public List<NormalNoteData> NormalNotes;                   // 일반 노트 데이터
     public List<HoldNoteData> HoldNotes;                     // 홀드 노트 데이터
     public List<SlideNoteData> SlideNotes;                    // 슬라이드 노트 데이터
-    public List<UpFlickNoteData> UpFlickNotes;                    // up 플릭 노트 데이터
-    public List<DownFlickNoteData> DownFlickNotes;                    // down 플릭 노트 데이터
+    public List<FlickNoteData> FlickNotes;                    // 플릭 노트 데이터
 
     public bool isLoaded;
 
@@ -20,8 +19,7 @@ public class ChartManager
         NormalNotes = new();
         HoldNotes = new();
         SlideNotes = new();
-        UpFlickNotes = new();
-        DownFlickNotes = new();
+        FlickNotes = new();
         Notes = new();
         for (int i = 0; i < 22; i++)
         {
@@ -38,8 +36,7 @@ public class ChartManager
             NormalNotes = this.NormalNotes,
             HoldNotes = this.HoldNotes,
             SlideNotes = this.SlideNotes,
-            UpFlickNotes = this.UpFlickNotes,
-            DownFlickNotes = this.DownFlickNotes
+            FlickNotes = this.FlickNotes,
         };
 
         string json = JsonUtility.ToJson(data, true);
@@ -84,8 +81,7 @@ public class ChartManager
         Managers.Chart.NormalNotes.Clear();
         Managers.Chart.SlideNotes.Clear();
         Managers.Chart.HoldNotes.Clear();
-        Managers.Chart.DownFlickNotes.Clear();
-        Managers.Chart.UpFlickNotes.Clear();
+        Managers.Chart.FlickNotes.Clear();
         Managers.Chart.Notes.Clear();
         for (int i = 0; i < 22; i++)
         {
@@ -109,6 +105,11 @@ public class ChartManager
             Vector3 scale = noteGO.transform.localScale;
             scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
+
+            Vector3 newPos = noteGO.transform.position;
+            newPos.x += (lineSpawner.lineGap / 2) * (note.length - 1);
+
+            noteGO.transform.position = newPos;
 
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
         }
@@ -136,6 +137,11 @@ public class ChartManager
             scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
 
+            Vector3 newPos = noteGO.transform.position;
+            newPos.x += (lineSpawner.lineGap / 2) * (note.length - 1);
+
+            noteGO.transform.position = newPos;
+
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
         }
 
@@ -154,17 +160,28 @@ public class ChartManager
             scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
 
+            Vector3 newPos = noteGO.transform.position;
+            newPos.x += (lineSpawner.lineGap / 2) * (note.length - 1);
+
+            noteGO.transform.position = newPos;
+
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
         }
 
-        foreach (var note in data.UpFlickNotes)
+        foreach (var note in data.FlickNotes)
         {
-            Managers.Chart.UpFlickNotes.Add(note);
+            Managers.Chart.FlickNotes.Add(note);
 
             Vector3 notePos = new Vector3(
                 lineSpawner.verticalLines[note.line].transform.position.x + (lineSpawner.lineGap / 2),
                 lineSpawner.lines[note.position].transform.position.y, 0f);
-            GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
+            GameObject notePrefab;
+
+            if (note.direction == 0)
+                notePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
+            else
+                notePrefab = Resources.Load<GameObject>("Prefabs/Notes/DownFlickNote");
+
             GameObject noteGO = GameObject.Instantiate(notePrefab);
             noteGO.transform.position = notePos;
 
@@ -172,23 +189,10 @@ public class ChartManager
             scale.x = lineSpawner.lineGap * note.length;
             noteGO.transform.localScale = scale;
 
-            Managers.Chart.Notes[note.line].Add(note.position, noteGO);
-        }
+            Vector3 newPos = noteGO.transform.position;
+            newPos.x += (lineSpawner.lineGap / 2) * (note.length - 1);
 
-        foreach (var note in data.DownFlickNotes)
-        {
-            Managers.Chart.DownFlickNotes.Add(note);
-
-            Vector3 notePos = new Vector3(
-                lineSpawner.verticalLines[note.line].transform.position.x + (lineSpawner.lineGap / 2),
-                lineSpawner.lines[note.position].transform.position.y, 0f);
-            GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/DownFlickNote");
-            GameObject noteGO = GameObject.Instantiate(notePrefab);
-            noteGO.transform.position = notePos;
-
-            Vector3 scale = noteGO.transform.localScale;
-            scale.x = lineSpawner.lineGap * note.length;
-            noteGO.transform.localScale = scale;
+            noteGO.transform.position = newPos;
 
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
         }
@@ -202,7 +206,6 @@ public class ChartData
     public List<NormalNoteData> NormalNotes;
     public List<HoldNoteData> HoldNotes;
     public List<SlideNoteData> SlideNotes;
-    public List<UpFlickNoteData> UpFlickNotes;
-    public List<DownFlickNoteData> DownFlickNotes;
+    public List<FlickNoteData> FlickNotes;
 }
 

@@ -1,208 +1,58 @@
 {
     "NormalNotes": [
         {
-            "position": 1,
-            "line": 15,
-            "length": 1.0
-        },
-        {
-            "position": 0,
-            "line": 10,
-            "length": 3.6000006198883058
-        },
-        {
-            "position": 20,
-            "line": 16,
-            "length": 1.0
-        },
-        {
-            "position": 22,
-            "line": 6,
-            "length": 1.0
-        }
-    ],
-    "HoldNotes": [
-        {
-            "position": 1,
-            "line": 6,
-            "noteType": 0,
-            "count": 0,
-            "length": 1.0
-        },
-        {
             "position": 4,
-            "line": 6,
-            "noteType": 1,
-            "count": 0,
-            "length": 1.0
-        },
-        {
-            "position": 4,
-            "line": 7,
-            "noteType": 1,
-            "count": 0,
-            "length": 1.0
-        },
-        {
-            "position": 8,
-            "line": 7,
-            "noteType": 2,
-            "count": 0,
-            "length": 1.0
-        },
-        {
-            "position": 20,
-            "line": 11,
-            "noteType": 0,
-            "count": 0,
-            "length": 1.0
-        },
-        {
-            "position": 22,
-            "line": 5,
-            "noteType": 0,
-            "count": 0,
-            "length": 1.0
-        },
-        {
-            "position": 27,
-            "line": 11,
-            "noteType": 2,
-            "count": 0,
-            "length": 1.0
-        },
-        {
-            "position": 30,
-            "line": 5,
-            "noteType": 2,
-            "count": 0,
-            "length": 1.0
-        }
-    ],
-    "SlideNotes": [
-        {
-            "position": 1,
             "line": 16,
-            "length": 1.0
-        },
-        {
-            "position": 21,
-            "line": 8,
-            "length": 1.0
-        },
-        {
-            "position": 23,
-            "line": 4,
-            "length": 1.0
-        },
-        {
-            "position": 2,
-            "line": 17,
-            "length": 1.0
-        },
-        {
-            "position": 3,
-            "line": 18,
-            "length": 1.0
-        },
-        {
-            "position": 4,
-            "line": 19,
-            "length": 1.0
-        },
-        {
-            "position": 5,
-            "line": 20,
-            "length": 1.0
-        },
-        {
-            "position": 6,
-            "line": 19,
-            "length": 1.0
-        },
-        {
-            "position": 8,
-            "line": 17,
-            "length": 1.0
-        },
-        {
-            "position": 7,
-            "line": 18,
-            "length": 1.0
-        },
-        {
-            "position": 9,
-            "line": 16,
-            "length": 1.0
-        },
-        {
-            "position": 10,
-            "line": 15,
-            "length": 1.0
+            "length": 1
         },
         {
             "position": 11,
-            "line": 14,
-            "length": 1.0
-        },
-        {
-            "position": 12,
-            "line": 13,
-            "length": 1.0
-        },
-        {
-            "position": 13,
-            "line": 12,
-            "length": 1.0
-        },
-        {
-            "position": 14,
-            "line": 11,
-            "length": 1.0
-        }
-    ],
-    "UpFlickNotes": [
-        {
-            "position": 5,
-            "line": 3,
-            "length": 1.0
-        },
-        {
-            "position": 12,
             "line": 4,
-            "length": 1.0
-        },
-        {
-            "position": 15,
-            "line": 3,
-            "length": 1.0
+            "length": 13
         }
     ],
-    "DownFlickNotes": [
+    "HoldNotes": [],
+    "SlideNotes": [
+        {
+            "position": 0,
+            "line": 9,
+            "length": 6
+        },
+        {
+            "position": 2,
+            "line": 9,
+            "length": 6
+        },
         {
             "position": 7,
-            "line": 4,
-            "length": 1.0
+            "line": 11,
+            "length": 6
+        }
+    ],
+    "FlickNotes": [
+        {
+            "position": 5,
+            "line": 9,
+            "length": 1,
+            "direction": 1
         },
         {
-            "position": 10,
+            "position": 3,
+            "line": 8,
+            "length": 1,
+            "direction": 1
+        },
+        {
+            "position": 3,
             "line": 6,
-            "length": 1.0
+            "length": 1,
+            "direction": 1
         },
         {
-            "position": 13,
-            "line": 3,
-            "length": 1.0
-        },
-        {
-            "position": 15,
-            "line": 4,
-            "length": 1.0
-        },
-        {
-            "position": 15,
-            "line": 7,
-            "length": 1.0
+            "position": 4,
+            "line": 5,
+            "length": 1,
+            "direction": 1
         }
     ]
 }

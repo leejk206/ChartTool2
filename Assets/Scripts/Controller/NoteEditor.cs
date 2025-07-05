@@ -19,10 +19,7 @@ public class NoteEditor : MonoBehaviour
         Managers.Input.KeyAction -= AddNormalNote;
         Managers.Input.KeyAction -= AddHoldNote;
         Managers.Input.KeyAction -= AddSlideNote;
-        Managers.Input.KeyAction -= AddUpFlickNote;
-        Managers.Input.KeyAction -= AddDownFlickNote;
-        Managers.Input.KeyAction -= AddDownFlickNote;
-        Managers.Input.KeyAction -= AddDownFlickNote;
+        Managers.Input.KeyAction -= AddFlickNote;
         Managers.Input.KeyAction -= _keypadKeyAction;
 
         _keypadKeyAction = () =>
@@ -41,11 +38,7 @@ public class NoteEditor : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.R))
             {
-                AddUpFlickNote();
-            }
-            else if (Input.GetKeyDown(KeyCode.Keypad5) || Input.GetKeyDown(KeyCode.T))
-            {
-                AddDownFlickNote();
+                AddFlickNote();
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
@@ -55,10 +48,13 @@ public class NoteEditor : MonoBehaviour
             {
                 DecreaseNoteLength();
             }
-        };
-        Managers.Input.KeyAction += _keypadKeyAction;
-        lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
-    }
+            }
+            ;
+            Managers.Input.KeyAction += _keypadKeyAction;
+            lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
+        }
+        
+
 
     // Update is called once per frame
     void GetMousePosition()
@@ -133,7 +129,7 @@ public class NoteEditor : MonoBehaviour
 
             Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
 
-            Managers.Chart.NormalNotes.Add(new NormalNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
+            Managers.Chart.NormalNotes.Add(new NormalNoteData(closestHorizontalIndex, leftVerticalIndex, 1));
         }
         else
         {
@@ -282,7 +278,7 @@ public class NoteEditor : MonoBehaviour
 
                 Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
 
-                Managers.Chart.HoldNotes.Add(new HoldNoteData(closestHorizontalIndex, leftVerticalIndex, 0, 0, 1f));
+                Managers.Chart.HoldNotes.Add(new HoldNoteData(closestHorizontalIndex, leftVerticalIndex, 0, 0, 1));
             }
         }
         Managers.Chart.SaveChart();
@@ -318,7 +314,7 @@ public class NoteEditor : MonoBehaviour
 
             Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
 
-            Managers.Chart.SlideNotes.Add(new SlideNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
+            Managers.Chart.SlideNotes.Add(new SlideNoteData(closestHorizontalIndex, leftVerticalIndex, 1));
         }
         else
         {
@@ -335,7 +331,7 @@ public class NoteEditor : MonoBehaviour
         Managers.Chart.SaveChart();
     }
 
-    public void AddUpFlickNote()
+    public void AddFlickNote()
     {
         if (Managers.Chart.isLoaded == false)
         {
@@ -344,84 +340,105 @@ public class NoteEditor : MonoBehaviour
 
         GetMousePosition();
 
-        int index = Managers.Chart.UpFlickNotes.FindIndex(note =>
-            note.position == closestHorizontalIndex &&
-            note.line == leftVerticalIndex);
-
-        if (!Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
+        if (Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
         {
-            Vector3 notePos = new Vector3(
-                lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
-                lineSpawner.lines[closestHorizontalIndex].transform.position.y,
-                0f
-            );
-            GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
-            GameObject note = Instantiate(notePrefab);
-            note.transform.position = notePos;
+            if (Managers.Chart.FlickNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
+            {
+                int index = Managers.Chart.FlickNotes.FindIndex(note =>
+                    note.position == closestHorizontalIndex &&
+                    note.line == leftVerticalIndex);
+                // FlickNote 종류 변경 로직
+                FlickNoteData result = Managers.Chart.FlickNotes.FirstOrDefault(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
+                if (result.direction == 0) // Up Flick Note인 경우
+                {
+                    result.direction = 1;
+                    Managers.Chart.FlickNotes[index] = result;
 
-            Vector3 scale = note.transform.localScale;
-            scale.x = lineSpawner.lineGap;
-            note.transform.localScale = scale;
+                    if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                    {
+                        GameObject.Destroy(obj);
+                        Managers.Chart.Notes[leftVerticalIndex].Remove(closestHorizontalIndex);
+                    }
 
-            Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
+                    Vector3 notePos = new Vector3(
+                    lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[closestHorizontalIndex].transform.position.y,
+                    0f
+                    );
+                    GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/DownFlickNote");
+                    GameObject note = Instantiate(notePrefab);
+                    note.transform.position = notePos;
 
-            Managers.Chart.UpFlickNotes.Add(new UpFlickNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
+                    Vector3 scale = note.transform.localScale;
+                    scale.x = lineSpawner.lineGap * result.length;
+                    note.transform.localScale = scale;
+
+                    Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
+                }
+                else if (result.direction == 1)
+                {
+                    result.direction = 0;
+                    Managers.Chart.FlickNotes[index] = result;
+
+                    if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                    {
+                        GameObject.Destroy(obj);
+                        Managers.Chart.Notes[leftVerticalIndex].Remove(closestHorizontalIndex);
+                    }
+
+                    Vector3 notePos = new Vector3(
+                    lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[closestHorizontalIndex].transform.position.y,
+                    0f
+                    );
+                    GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
+                    GameObject note = Instantiate(notePrefab);
+                    note.transform.position = notePos;
+
+                    Vector3 scale = note.transform.localScale;
+                    scale.x = lineSpawner.lineGap * result.length;
+                    note.transform.localScale = scale;
+
+                    Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
+                }
+            }
+            else
+            {
+                RemoveNoteFromJson(leftVerticalIndex, closestHorizontalIndex);
+                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                {
+                    GameObject.Destroy(obj);
+                    Managers.Chart.Notes[leftVerticalIndex].Remove(closestHorizontalIndex);
+                }
+            }
         }
         else
         {
-            RemoveNoteFromJson(leftVerticalIndex, closestHorizontalIndex);
-            if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
-            {
-                GameObject.Destroy(obj);
-                Managers.Chart.Notes[leftVerticalIndex].Remove(closestHorizontalIndex);
-            }
-        }
-        Managers.Chart.SaveChart();
-    }
-
-    public void AddDownFlickNote()
-    {
-        if (Managers.Chart.isLoaded == false)
-        {
-            Managers.Chart.LoadChart();
-        }
-
-        GetMousePosition();
-
-        int index = Managers.Chart.DownFlickNotes.FindIndex(note =>
+            int index = Managers.Chart.FlickNotes.FindIndex(note =>
             note.position == closestHorizontalIndex &&
             note.line == leftVerticalIndex);
 
-        if (!Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
-        {
-            Vector3 notePos = new Vector3(
-                lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
-                lineSpawner.lines[closestHorizontalIndex].transform.position.y,
-                0f
-            );
-            GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/DownFlickNote");
-            GameObject note = Instantiate(notePrefab);
-            note.transform.position = notePos;
-
-            Vector3 scale = note.transform.localScale;
-            scale.x = lineSpawner.lineGap;
-            note.transform.localScale = scale;
-
-            Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
-
-            Managers.Chart.DownFlickNotes.Add(new DownFlickNoteData(closestHorizontalIndex, leftVerticalIndex, 1f));
-        }
-        else
-        {
-            RemoveNoteFromJson(leftVerticalIndex, closestHorizontalIndex);
-            if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+            if (!Managers.Chart.Notes[leftVerticalIndex].ContainsKey(closestHorizontalIndex))
             {
-                GameObject.Destroy(obj);
-                Managers.Chart.Notes[leftVerticalIndex].Remove(closestHorizontalIndex);
+                Vector3 notePos = new Vector3(
+                    lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[closestHorizontalIndex].transform.position.y,
+                    0f
+                );
+                GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
+                GameObject note = Instantiate(notePrefab);
+                note.transform.position = notePos;
+
+                Vector3 scale = note.transform.localScale;
+                scale.x = lineSpawner.lineGap;
+                note.transform.localScale = scale;
+
+                Managers.Chart.Notes[leftVerticalIndex].Add(closestHorizontalIndex, note);
+
+                Managers.Chart.FlickNotes.Add(new FlickNoteData(closestHorizontalIndex, leftVerticalIndex, 1, 0));
             }
         }
         Managers.Chart.SaveChart();
-
     }
 
     public void IncreaseNoteLength()
@@ -440,8 +457,8 @@ public class NoteEditor : MonoBehaviour
             {
                 int index = Managers.Chart.NormalNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
                 NormalNoteData updated = Managers.Chart.NormalNotes[index];
-                if (updated.length <= 4.8f)
-                    updated.length += 0.2f;
+                if (updated.length <= 21)
+                    updated.length += 1;
                 Managers.Chart.NormalNotes[index] = updated;
 
                 if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
@@ -449,14 +466,19 @@ public class NoteEditor : MonoBehaviour
                     Vector3 scale = obj.transform.localScale;
                     scale.x = lineSpawner.lineGap * updated.length;
                     obj.transform.localScale = scale;
+
+                    Vector3 newPos = obj.transform.position;
+                    newPos.x += (lineSpawner.lineGap / 2);
+
+                    obj.transform.position = newPos;
                 }
             }
             else if (Managers.Chart.HoldNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
             {
                 int index = Managers.Chart.HoldNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
                 HoldNoteData updated = Managers.Chart.HoldNotes[index];
-                if (updated.length <= 4.8f)
-                    updated.length += 0.2f;
+                if (updated.length <= 21)
+                    updated.length += 1;
                 Managers.Chart.HoldNotes[index] = updated;
 
                 if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
@@ -464,14 +486,19 @@ public class NoteEditor : MonoBehaviour
                     Vector3 scale = obj.transform.localScale;
                     scale.x = lineSpawner.lineGap * updated.length;
                     obj.transform.localScale = scale;
+
+                    Vector3 newPos = obj.transform.position;
+                    newPos.x += (lineSpawner.lineGap / 2);
+
+                    obj.transform.position = newPos;
                 }
             }
             else if (Managers.Chart.SlideNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
             {
                 int index = Managers.Chart.SlideNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
                 SlideNoteData updated = Managers.Chart.SlideNotes[index];
-                if (updated.length <= 4.8f)
-                    updated.length += 0.2f;
+                if (updated.length <= 21)
+                    updated.length += 1;
                 Managers.Chart.SlideNotes[index] = updated;
 
                 if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
@@ -479,36 +506,11 @@ public class NoteEditor : MonoBehaviour
                     Vector3 scale = obj.transform.localScale;
                     scale.x = lineSpawner.lineGap * updated.length;
                     obj.transform.localScale = scale;
-                }
-            }
-            else if (Managers.Chart.UpFlickNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
-            {
-                int index = Managers.Chart.UpFlickNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
-                UpFlickNoteData updated = Managers.Chart.UpFlickNotes[index];
-                if (updated.length <= 4.8f)
-                    updated.length += 0.2f;
-                Managers.Chart.UpFlickNotes[index] = updated;
 
-                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
-                {
-                    Vector3 scale = obj.transform.localScale;
-                    scale.x = lineSpawner.lineGap * updated.length;
-                    obj.transform.localScale = scale;
-                }
-            }
-            else if (Managers.Chart.DownFlickNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
-            {
-                int index = Managers.Chart.DownFlickNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
-                DownFlickNoteData updated = Managers.Chart.DownFlickNotes[index];
-                if (updated.length <= 4.8f)
-                    updated.length += 0.2f;
-                Managers.Chart.DownFlickNotes[index] = updated;
+                    Vector3 newPos = obj.transform.position;
+                    newPos.x += (lineSpawner.lineGap / 2);
 
-                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
-                {
-                    Vector3 scale = obj.transform.localScale;
-                    scale.x = lineSpawner.lineGap * updated.length;
-                    obj.transform.localScale = scale;
+                    obj.transform.position = newPos;
                 }
             }
             Managers.Chart.SaveChart();
@@ -532,77 +534,69 @@ public class NoteEditor : MonoBehaviour
             {
                 int index = Managers.Chart.NormalNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
                 NormalNoteData updated = Managers.Chart.NormalNotes[index];
-                if (updated.length >= 1.2f)
-                    updated.length -= 0.2f;
-                Managers.Chart.NormalNotes[index] = updated;
-
-                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                if (updated.length > 1)
                 {
-                    Vector3 scale = obj.transform.localScale;
-                    scale.x = lineSpawner.lineGap * updated.length;
-                    obj.transform.localScale = scale;
+                    updated.length -= 1;
+                    Managers.Chart.NormalNotes[index] = updated;
+
+                    if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                    {
+                        Vector3 scale = obj.transform.localScale;
+                        scale.x = lineSpawner.lineGap * updated.length;
+                        obj.transform.localScale = scale;
+
+                        Vector3 newPos = obj.transform.position;
+                        newPos.x -= (lineSpawner.lineGap / 2);
+
+                        obj.transform.position = newPos;
+                    }
                 }
             }
             else if (Managers.Chart.HoldNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
             {
                 int index = Managers.Chart.HoldNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
                 HoldNoteData updated = Managers.Chart.HoldNotes[index];
-                if (updated.length >= 1.2f)
-                    updated.length -= 0.2f;
-                Managers.Chart.HoldNotes[index] = updated;
-
-                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                if (updated.length >= 1)
                 {
-                    Vector3 scale = obj.transform.localScale;
-                    scale.x = lineSpawner.lineGap * updated.length;
-                    obj.transform.localScale = scale;
+                    updated.length -= 1;
+                    Managers.Chart.HoldNotes[index] = updated;
+
+                    if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                    {
+                        Vector3 scale = obj.transform.localScale;
+                        scale.x = lineSpawner.lineGap * updated.length;
+                        obj.transform.localScale = scale;
+
+                        Vector3 newPos = obj.transform.position;
+                        newPos.x -= (lineSpawner.lineGap / 2);
+
+                        obj.transform.position = newPos;
+                    }
                 }
             }
             else if (Managers.Chart.SlideNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
             {
                 int index = Managers.Chart.SlideNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
                 SlideNoteData updated = Managers.Chart.SlideNotes[index];
-                if (updated.length >= 1.2f)
-                    updated.length -= 0.2f;
-                Managers.Chart.SlideNotes[index] = updated;
-
-                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                if (updated.length >= 1)
                 {
-                    Vector3 scale = obj.transform.localScale;
-                    scale.x = lineSpawner.lineGap * updated.length;
-                    obj.transform.localScale = scale;
+                    updated.length -= 1;
+                    Managers.Chart.SlideNotes[index] = updated;
+
+                    if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
+                    {
+                        Vector3 scale = obj.transform.localScale;
+                        scale.x = lineSpawner.lineGap * updated.length;
+                        obj.transform.localScale = scale;
+
+                        Vector3 newPos = obj.transform.position;
+                        newPos.x -= (lineSpawner.lineGap / 2);
+
+                        obj.transform.position = newPos;
+                    }
                 }
             }
-            else if (Managers.Chart.UpFlickNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
-            {
-                int index = Managers.Chart.UpFlickNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
-                UpFlickNoteData updated = Managers.Chart.UpFlickNotes[index];
-                if (updated.length >= 1.2f)
-                    updated.length -= 0.2f;
-                Managers.Chart.UpFlickNotes[index] = updated;
 
-                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
-                {
-                    Vector3 scale = obj.transform.localScale;
-                    scale.x = lineSpawner.lineGap * updated.length;
-                    obj.transform.localScale = scale;
-                }
-            }
-            else if (Managers.Chart.DownFlickNotes.Any(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex))
-            {
-                int index = Managers.Chart.DownFlickNotes.FindIndex(note => note.position == closestHorizontalIndex && note.line == leftVerticalIndex);
-                DownFlickNoteData updated = Managers.Chart.DownFlickNotes[index];
-                if (updated.length >= 1.2f)
-                    updated.length -= 0.2f;
-                Managers.Chart.DownFlickNotes[index] = updated;
-
-                if (Managers.Chart.Notes[leftVerticalIndex].TryGetValue(closestHorizontalIndex, out GameObject obj) && obj != null)
-                {
-                    Vector3 scale = obj.transform.localScale;
-                    scale.x = lineSpawner.lineGap * updated.length;
-                    obj.transform.localScale = scale;
-                }
-            }
             Managers.Chart.SaveChart();
         }
         else return;
@@ -636,18 +630,5 @@ public class NoteEditor : MonoBehaviour
             return;
         }
 
-        index = Managers.Chart.UpFlickNotes.FindIndex(note => note.position == pos && note.line == line);
-        if (index != -1)
-        {
-            Managers.Chart.UpFlickNotes.RemoveAt(index);
-            return;
-        }
-
-        index = Managers.Chart.DownFlickNotes.FindIndex(note => note.position == pos && note.line == line);
-        if (index != -1)
-        {
-            Managers.Chart.DownFlickNotes.RemoveAt(index);
-            return;
-        }
     }
 }
