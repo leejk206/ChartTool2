@@ -27,7 +27,8 @@ For Design
 
 For Dev
 Json 파일 형식에 float length 멤버를 추가하였습니다. 이 멤버는 노트의 길이 배율을 나타냅니다. 지금 구현하고 계신 노트에 length배만큼 좌우 길이를 곱하면 됩니다.
-HoldNote를 구현하였습니다. 다만 count 멤버는 아직 구현하지 못하였습니다.
+HoldNote를 구현하였습니다. 다만 count 멤버는 아직 구현하지 못하였습니다. 
+FlickNote을 통합하였습니다. int direction 멤버가 추가되었고, direction = 0인 경우 위 플릭 노트를, direction = 1인 경우 아래 플릭 노트를 의미합니다.
 
 For Design
 0. Assets - Scenes - SampleScene을 클릭하여 씬을 로드합니다.
