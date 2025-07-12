@@ -16,17 +16,22 @@
         {
             "position": 0,
             "line": 9,
-            "length": 6
+            "length": 0
         },
         {
             "position": 2,
             "line": 9,
-            "length": 6
+            "length": 1
         },
         {
             "position": 7,
             "line": 11,
             "length": 6
+        },
+        {
+            "position": 2,
+            "line": 16,
+            "length": 1
         }
     ],
     "FlickNotes": [
@@ -34,7 +39,7 @@
             "position": 5,
             "line": 9,
             "length": 1,
-            "direction": 1
+            "direction": 0
         },
         {
             "position": 3,
