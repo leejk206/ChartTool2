@@ -24,6 +24,8 @@ UserSettings/
 *.pidb
 *.booproj
 *.unityproj
+*.json
+*.json.meta
 
 .DS_Store
 Thumbs.db
