@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using UnityEngine;
+using System.Linq;
 
 public class ChartManager
 {
@@ -31,12 +32,34 @@ public class ChartManager
 
     public void SaveChart()
     {
+        #region Sort
+        List<NormalNoteData> sortedNormalNotes = NormalNotes
+        .OrderBy(note => note.position)
+        .ThenBy(note => note.line) 
+        .ToList();
+
+        List<HoldNoteData> sortedHoldNotes = HoldNotes
+        .OrderBy(note => note.position)
+        .ThenBy(note => note.line)
+        .ToList();
+
+        List<SlideNoteData> sortedSlideNotes = SlideNotes
+        .OrderBy(note => note.position)
+        .ThenBy(note => note.line)
+        .ToList();
+
+        List<FlickNoteData> sortedFlickNotes = FlickNotes
+        .OrderBy(note => note.position)
+        .ThenBy(note => note.line)
+        .ToList();
+        #endregion
+
         ChartData data = new ChartData
         {
-            NormalNotes = this.NormalNotes,
-            HoldNotes = this.HoldNotes,
-            SlideNotes = this.SlideNotes,
-            FlickNotes = this.FlickNotes,
+            NormalNotes = sortedNormalNotes,
+            HoldNotes = sortedHoldNotes,
+            SlideNotes = sortedSlideNotes,
+            FlickNotes = sortedFlickNotes,
         };
 
         string json = JsonUtility.ToJson(data, true);
