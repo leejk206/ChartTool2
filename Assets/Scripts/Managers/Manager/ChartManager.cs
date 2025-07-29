@@ -76,7 +76,8 @@ public class ChartManager
         if (!File.Exists(path))
         {
             Debug.LogError("Chart file not found: " + path);
-            return;
+            // 디렉터리 없으면 생성
+            File.WriteAllText(path, "{}");
         }
 
         string json = File.ReadAllText(path);

@@ -64,31 +64,3 @@ public struct FlickNoteData
         this.direction = direction;
     }
 }
-
-[Serializable]
-public struct UpFlickNoteData
-{
-    public int position;
-    public int line;
-    public int length;
-    public UpFlickNoteData(int position, int line, int length)
-    {
-        this.position = position;
-        this.line = line;
-        this.length = length;
-    }
-}
-
-[Serializable]
-public struct DownFlickNoteData
-{
-    public int position;
-    public int line;
-    public int length;
-    public DownFlickNoteData(int position, int line, int length)
-    {
-        this.position = position;
-        this.line = line;
-        this.length = length;
-    }
-}
