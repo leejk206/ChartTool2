@@ -672,5 +672,12 @@ public class NoteEditor : MonoBehaviour
             return;
         }
 
+        index = Managers.Chart.FlickNotes.FindIndex(note => note.position == pos && note.line == line);
+        if (index != -1)
+        {
+            Managers.Chart.FlickNotes.RemoveAt(index);
+            return;
+        }
+
     }
 }
