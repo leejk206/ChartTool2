@@ -1,5 +1,20 @@
-For Dev
+12/02 업데이트
+For Design
+이제 각 HoldNote는 count 값을 지닙니다.
 
+HoldNote의 Start 노트(위쪽 화살표 노트)의 왼쪽 영역(노트의 좌우 크기를 확장하기 전 생성되는 기본 위치)에 대고 L키를 누르면 준비 상태가 됩니다.(이때 UI상 변동은 없습니다.)
+준비 상태에서, 그 Start HoldNote와 같은 그룹으로 묶고 싶은 다른 HoldNote의 왼쪽 영역에 커서를 두고 L 키를 누르면 두 노트를 연결하는 분홍색 직선이 표시됩니다.
+
+이 직선은 실제 플레이 중에 따라가는 손의 경로가 아닙니다.
+단순히 채보 툴 상에서 해당 HoldNote들이 하나의 count 그룹에 속한다는 것을 디자이너에게 시각적으로 보여주는 표시입니다.
+따라서 선의 형태가 원하는 경로와 다르더라도 선이 이어져 있기만 하면 실제 플레이에서는 설정된 HoldNote들 사이의 올바른 경로가 자동으로 그려집니다.
+
+서로 다른 Start holdNote는 같은 Mid HoldNote(위아래 화살표) 또는 End HoldNote(아래 화살표)와 연결될 수 없습니다.
+한 Mid/End 노트는 반드시 하나의 Start 노트 그룹에만 이어져야 합니다.
+이러한 경우, 해당 HoldNote를 둘로 쪼개서 두 개의 Start HoldNote로 연결되도록 채보를 구성해 주세요.
+
+// 이전 업데이트 내역
+For Dev
 Json 파일 형식이 변경되었습니다.
 
 Normal, Slide, UpFlick, DownFlick의 경우 2개의 int형 변수와 1개의 float형 변수수가 멤버로 존재합니다.

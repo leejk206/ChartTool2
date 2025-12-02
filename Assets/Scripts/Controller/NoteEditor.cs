@@ -12,6 +12,15 @@ public class NoteEditor : MonoBehaviour
 
     int leftVerticalIndex;
     int closestHorizontalIndex;
+    int noteCount;
+
+    bool isLinking; // 현재 링크중인지를 판별하는 노트
+
+    Vector3 linkedLineStartPosition;
+    Vector3 linkedLineEndPosition;
+
+    int lineVerticalIndex;
+    int lineHorizontalIndex;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -48,12 +57,22 @@ public class NoteEditor : MonoBehaviour
             {
                 DecreaseNoteLength();
             }
+            else if (Input.GetKeyDown(KeyCode.L))
+            {
+                LinkHoldNotes();
             }
-            ;
-            Managers.Input.KeyAction += _keypadKeyAction;
-            lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
         }
-        
+            ;
+        Managers.Input.KeyAction += _keypadKeyAction;
+        lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
+
+        noteCount = 0;
+        isLinking = false;
+
+        linkedLineStartPosition = new Vector3(0, 0, 0);
+        linkedLineEndPosition = new Vector3(0, 0, 0);
+    }
+
 
 
     // Update is called once per frame
@@ -280,6 +299,8 @@ public class NoteEditor : MonoBehaviour
 
                 Managers.Chart.HoldNotes.Add(new HoldNoteData(closestHorizontalIndex, leftVerticalIndex, 0, 0, 1));
             }
+
+            
         }
         Managers.Chart.SaveChart();
     }
@@ -679,5 +700,123 @@ public class NoteEditor : MonoBehaviour
             return;
         }
 
+    }
+
+    public void LinkHoldNotes()
+    {
+        GetMousePosition();
+
+        int index = Managers.Chart.HoldNotes.FindIndex(note =>
+        note.position == closestHorizontalIndex &&
+        note.line == leftVerticalIndex);
+
+
+        HoldNoteData data = Managers.Chart.HoldNotes[index];
+
+        // 0번 HoldNote(START 타입)인지 확인
+        if (data.noteType == 0)
+        {
+            if (isLinking)
+            {
+                if (Managers.Chart.LinkedLines.TryGetValue((leftVerticalIndex, closestHorizontalIndex), out GameObject obj) && obj != null)
+                {
+                    data.count = noteCount;
+                }
+                isLinking = false;
+            }
+            else
+            {
+                if (Managers.Chart.LinkedLines.TryGetValue((leftVerticalIndex, closestHorizontalIndex), out GameObject obj) && obj != null)
+                {
+                    GameObject.Destroy(obj);
+                    Managers.Chart.LinkedLines.Remove((leftVerticalIndex, closestHorizontalIndex));
+                }
+                noteCount = data.count;
+                lineVerticalIndex = leftVerticalIndex;
+                lineHorizontalIndex = closestHorizontalIndex;
+                isLinking = true;
+                linkedLineStartPosition = new Vector3(
+                        lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
+                        lineSpawner.lines[closestHorizontalIndex].transform.position.y, 0f);
+                return;
+            }
+        }
+        else if (data.noteType == 1)
+        {
+            if (isLinking)
+            {
+                data.count = noteCount;
+                Managers.Chart.HoldNotes[index] = data;
+                linkedLineEndPosition = new Vector3(
+                    lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[closestHorizontalIndex].transform.position.y,
+                    0f
+                );
+
+                GameObject lineObj = new GameObject("LinkLine");
+                LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
+
+                lineRenderer.positionCount = 2;
+                lineRenderer.SetPosition(0, linkedLineStartPosition);
+                lineRenderer.SetPosition(1, linkedLineEndPosition);
+
+                lineRenderer.widthMultiplier = 0.1f;
+
+                lineRenderer.startColor = Color.gray;
+                lineRenderer.endColor = Color.gray;
+
+                isLinking = false;
+
+                Managers.Chart.LinkedLines.Add((lineVerticalIndex, lineHorizontalIndex), lineObj);
+            }
+            else
+            {
+                if (Managers.Chart.LinkedLines.TryGetValue((leftVerticalIndex, closestHorizontalIndex), out GameObject obj) && obj != null)
+                {
+                    GameObject.Destroy(obj);
+                    Managers.Chart.LinkedLines.Remove((leftVerticalIndex, closestHorizontalIndex));
+                }
+
+                noteCount = data.count;
+                lineVerticalIndex = leftVerticalIndex;
+                lineHorizontalIndex = closestHorizontalIndex;
+                isLinking = true;
+                linkedLineStartPosition = new Vector3(
+                        lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
+                        lineSpawner.lines[closestHorizontalIndex].transform.position.y, 0f);
+                return;
+            }
+            
+        }
+        else if (data.noteType == 2)
+        {
+            if (isLinking)
+            {
+                data.count = noteCount;
+                Managers.Chart.HoldNotes[index] = data;
+                linkedLineEndPosition = new Vector3(
+                    lineSpawner.verticalLines[leftVerticalIndex].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[closestHorizontalIndex].transform.position.y,
+                    0f
+                );
+
+                GameObject lineObj = new GameObject("LinkLine");
+                LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
+
+                lineRenderer.positionCount = 2;
+                lineRenderer.SetPosition(0, linkedLineStartPosition);
+                lineRenderer.SetPosition(1, linkedLineEndPosition);
+
+                lineRenderer.widthMultiplier = 0.1f;
+
+                lineRenderer.startColor = Color.gray;
+                lineRenderer.endColor = Color.gray;
+
+                isLinking = false;
+
+                Managers.Chart.LinkedLines.Add((lineVerticalIndex, lineHorizontalIndex), lineObj);
+            }
+        }
+        Managers.Chart.SaveChart();
     }
 }

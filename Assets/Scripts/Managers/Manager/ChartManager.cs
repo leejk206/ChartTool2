@@ -12,8 +12,9 @@ public class ChartManager
     public List<SlideNoteData> SlideNotes;                    // 슬라이드 노트 데이터
     public List<FlickNoteData> FlickNotes;                    // 플릭 노트 데이터
 
-    public bool isLoaded;
+    public Dictionary<(int, int), GameObject> LinkedLines;
 
+    public bool isLoaded;
 
     public void Init()
     {
@@ -28,6 +29,7 @@ public class ChartManager
         }
 
         isLoaded = false;
+        LinkedLines = new();
     }
 
     public void SaveChart()
@@ -42,6 +44,18 @@ public class ChartManager
         .OrderBy(note => note.position)
         .ThenBy(note => note.line)
         .ToList();
+
+        int cnt = 0;
+        for (int i = 0; i < sortedHoldNotes.Count; i++)
+        {
+            HoldNoteData holdnotedata = sortedHoldNotes[i];
+            if (holdnotedata.noteType == 0)
+            {
+                holdnotedata.count = cnt; // count 값 재설정
+                cnt++;
+                sortedHoldNotes[i] = holdnotedata; // struct 업데이트 반영
+            }
+        }
 
         List<SlideNoteData> sortedSlideNotes = SlideNotes
         .OrderBy(note => note.position)
@@ -63,8 +77,11 @@ public class ChartManager
         };
 
         string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText("Assets//MyChart.json", json);
+        File.WriteAllText("Assets//daki-월광소녀.json", json);
+
+        LoadChart();
     }
+
 
     public void LoadChart()
     {
@@ -72,7 +89,7 @@ public class ChartManager
 
         LineSpawner lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
 
-        string path = "Assets//MyChart.json";
+        string path = "Assets//daki-월광소녀.json";
         if (!File.Exists(path))
         {
             Debug.LogError("Chart file not found: " + path);
@@ -219,6 +236,114 @@ public class ChartManager
             noteGO.transform.position = newPos;
 
             Managers.Chart.Notes[note.line].Add(note.position, noteGO);
+        }
+        #endregion
+
+        
+    }
+
+    public void RenderLinkedLines()
+    {
+        LineSpawner lineSpawner = GameObject.Find("LineSpawner").GetComponent<LineSpawner>();
+        #region RenderLinkedLines
+        foreach (var item in HoldNotes)
+        {
+            if (item.noteType == 0)
+            {
+                var target1 = HoldNotes.FirstOrDefault(h => h.noteType == 1 && h.count == item.count);
+                bool found1 = HoldNotes.Any(h => h.noteType == 1 && h.count == item.count);
+
+                if (found1)
+                {
+                    Vector3 linkedLineStartPosition = new Vector3(
+                    lineSpawner.verticalLines[item.line].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[item.position].transform.position.y, 0f);
+
+                    Vector3 linkedLineEndPosition = new Vector3(
+                    lineSpawner.verticalLines[target1.line].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[target1.position].transform.position.y, 0f);
+
+                    GameObject lineObj = new GameObject("LinkLine");
+                    LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
+
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.SetPosition(0, linkedLineStartPosition);
+                    lineRenderer.SetPosition(1, linkedLineEndPosition);
+
+                    lineRenderer.widthMultiplier = 0.1f;
+
+                    lineRenderer.startColor = Color.gray;
+                    lineRenderer.endColor = Color.gray;
+
+                    if(!Managers.Chart.LinkedLines.ContainsKey((item.line, item.position)))
+                    {
+                        Managers.Chart.LinkedLines.Add((item.line, item.position), lineObj);
+                    }
+                }
+
+
+                var target2 = HoldNotes.FirstOrDefault(h => h.noteType == 2 && h.count == item.count);
+                bool found2 = HoldNotes.Any(h => h.noteType == 2 && h.count == item.count);
+                if (found2)
+                {
+                    Vector3 linkedLineStartPosition = new Vector3(
+                    lineSpawner.verticalLines[item.line].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[item.position].transform.position.y, 0f);
+
+                    Vector3 linkedLineEndPosition = new Vector3(
+                    lineSpawner.verticalLines[target2.line].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[target2.position].transform.position.y, 0f);
+
+                    GameObject lineObj = new GameObject("LinkLine");
+                    LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
+
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.SetPosition(0, linkedLineStartPosition);
+                    lineRenderer.SetPosition(1, linkedLineEndPosition);
+
+                    lineRenderer.widthMultiplier = 0.1f;
+
+                    lineRenderer.startColor = Color.gray;
+                    lineRenderer.endColor = Color.gray;
+
+                    if (!Managers.Chart.LinkedLines.ContainsKey((item.line, item.position)))
+                    {
+                        Managers.Chart.LinkedLines.Add((item.line, item.position), lineObj);
+                    }
+                }
+            }
+            else if (item.noteType == 1)
+            {
+                var target2 = HoldNotes.FirstOrDefault(h => h.noteType == 1 && h.count == item.count);
+                bool found2 = HoldNotes.Any(h => h.noteType == 2 && h.count == item.count);
+                if (found2)
+                {
+                    Vector3 linkedLineStartPosition = new Vector3(
+                    lineSpawner.verticalLines[item.line].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[item.position].transform.position.y, 0f);
+
+                    Vector3 linkedLineEndPosition = new Vector3(
+                    lineSpawner.verticalLines[target2.line].transform.position.x + (lineSpawner.lineGap / 2),
+                    lineSpawner.lines[target2.position].transform.position.y, 0f);
+
+                    GameObject lineObj = new GameObject("LinkLine");
+                    LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
+
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.SetPosition(0, linkedLineStartPosition);
+                    lineRenderer.SetPosition(1, linkedLineEndPosition);
+
+                    lineRenderer.widthMultiplier = 0.1f;
+
+                    lineRenderer.startColor = Color.gray;
+                    lineRenderer.endColor = Color.gray;
+
+                    if (!Managers.Chart.LinkedLines.ContainsKey((item.line, item.position)))
+                    {
+                        Managers.Chart.LinkedLines.Add((item.line, item.position), lineObj);
+                    }
+                }
+            }
         }
         #endregion
     }

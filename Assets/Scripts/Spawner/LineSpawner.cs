@@ -284,6 +284,7 @@ public class LineSpawner : MonoBehaviour
     public void LoadChart()
     {
         Managers.Chart.LoadChart();
+        Managers.Chart.RenderLinkedLines();
     }
 
 }
